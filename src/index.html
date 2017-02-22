@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title> Get logo, hit space </title>
+		<style>
+			h1 {
+				left: 0;
+				line-height: 200px;
+				margin-top: -100px;
+				position: absolute;
+				text-align: center;
+				top: 50%;
+				width: 100%;
+			}	
+		</style>
+		<script>
+			function UpdateText(text) {
+				document.getElementById("text").innerHTML=text.Word;
+			}
+
+			window.onload = function() {
+				document.body.onkeyup = function(e){
+					if(e.keyCode == 32){
+						//UpdateText("spacebar");
+						var s=document.createElement("script");
+						s.type="text/javascript";
+						s.src="http://www.setgetgo.com/randomword/get.php?callback=UpdateText";
+						document.body.appendChild(s);
+					}
+				}
+			};
+		</script>
+	</head>
+	<body>
+		<h1 id="text"> Get logo, hit space </h1>
+	</body>
+</html>
