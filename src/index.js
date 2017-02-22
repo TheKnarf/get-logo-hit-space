@@ -17,9 +17,11 @@ function hexToColor(hex) {
 }
 
 function UpdateLogo(word) {
+	var parentDiv = document.getElementById("text");
+
 	// Get a new bg color
 	var bgColor = Math.floor(Math.random() * 0xFFFFFF);
-	document.body.style.backgroundColor = hexToColor(bgColor);
+	parentDiv.style.backgroundColor = hexToColor(bgColor);
 
 	// TODO: this is a horrible algorithm for choosing an oposite color
 	// find somehting better: http://softwareengineering.stackexchange.com/questions/44929/color-schemes-generation-theory-and-algorithms
@@ -46,21 +48,23 @@ function UpdateLogo(word) {
 	svg.appendChild(textSvg);
 	textSvg.appendChild(document.createTextNode(word.Word));
 
-	var parentDiv = document.getElementById("text");
 	parentDiv.innerHTML="";
 	parentDiv.appendChild(svg);
-
-
 }
 
 window.onload = function() {
-	document.body.onkeyup = function(e){
+	window.onkeydown = function(e){
 		if(e.keyCode == 32){
-			//UpdateText("spacebar");
 			var s=document.createElement("script");
 			s.type="text/javascript";
 			s.src="http://www.setgetgo.com/randomword/get.php?callback=UpdateLogo";
 			document.body.appendChild(s);
+		}
+		
+		// Prevent scrolling
+		if(e.keyCode == 32 || e.which == 32) {
+			e.preventDefault();
+			return 0;
 		}
 	}
 };
