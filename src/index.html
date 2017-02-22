@@ -14,6 +14,20 @@
 			}	
 		</style>
 		<script>
+			var fonts = [
+				{name : "Roboto"},
+				{name : "Open Sans"},
+				{name : "Josefin Slab"},
+				{name : "Arvo"},
+				{name : "Lato"},
+				{name : "Abril Fatface"},
+				{name : "Ubuntu"},
+				{name : "PT Sans"},
+				{name : "Old Standard TT"},
+				{name : "Droid Sans"},
+				{name : "Sansita"}
+			]
+
 			function hexToColor(hex) {	
 				return "#" + ("000000" + hex.toString(16)).substr(-6);
 			}
@@ -32,6 +46,18 @@
 				value = ((value & 0x33) << 2) | ((value & 0xCC) >> 2);
 				value = ((value & 0x55) << 1) | ((value & 0xAA) >> 1);
 				h1.style.color = hexToColor(value);
+
+				var choosenFont = Math.floor(Math.random()*fonts.length);
+
+				if(typeof fonts[choosenFont].loaded == 'undefined') {
+					var link = document.createElement("link");
+					link.href="https://fonts.googleapis.com/css?family=" + fonts[choosenFont].name.split(' ').join('+');
+					link.rel="stylesheet"
+					document.body.appendChild(link);
+					fonts[choosenFont].loaded = true;
+				}
+				
+				h1.style.fontFamily=fonts[choosenFont].name;
 			}
 
 			window.onload = function() {
