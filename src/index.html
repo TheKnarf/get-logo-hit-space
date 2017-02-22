@@ -3,7 +3,7 @@
 	<head>
 		<title> Get logo, hit space </title>
 		<style>
-			h1 {
+			div {
 				left: 0;
 				line-height: 200px;
 				margin-top: -100px;
@@ -11,11 +11,20 @@
 				text-align: center;
 				top: 50%;
 				width: 100%;
-			}	
+			}
+			svg {
+				display: inline;
+				font-size: 2em;
+				font-weight: bold;
+			}
 		</style>
 		<script src="index.js"></script>
 	</head>
 	<body>
-		<h1 id="text"> Get logo, hit space </h1>
+		<div id="text">
+			<svg>
+				<text x="0" y="25" fill="black">Get logo, hit space</text>
+			</svg>
+		</div>
 	</body>
 </html>

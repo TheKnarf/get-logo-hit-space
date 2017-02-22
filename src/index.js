@@ -10,16 +10,14 @@ var fonts = [
 	{name : "Old Standard TT"},
 	{name : "Droid Sans"},
 	{name : "Sansita"}
-]
+];
 
 function hexToColor(hex) {	
 	return "#" + ("000000" + hex.toString(16)).substr(-6);
 }
 
 function UpdateLogo(word) {
-	var h1 = document.getElementById("text");
-	h1.innerHTML=word.Word;
-
+	// Get a new bg color
 	var bgColor = Math.floor(Math.random() * 0xFFFFFF);
 	document.body.style.backgroundColor = hexToColor(bgColor);
 
@@ -28,8 +26,6 @@ function UpdateLogo(word) {
 	// http://serennu.com/colour/rgbtohsl.php
 	var value = ((bgColor & 0x0F) << 4) | ((bgColor & 0xF0) >> 4);
 	value = ((value & 0x33) << 2) | ((value & 0xCC) >> 2);
-	value = ((value & 0x55) << 1) | ((value & 0xAA) >> 1);
-	h1.style.color = hexToColor(value);
 
 	var choosenFont = Math.floor(Math.random()*fonts.length);
 
@@ -41,7 +37,20 @@ function UpdateLogo(word) {
 		fonts[choosenFont].loaded = true;
 	}
 
-	h1.style.fontFamily=fonts[choosenFont].name;
+	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+	var textSvg = document.createElementNS(svg.namespaceURI, "text");
+	textSvg.setAttributeNS(null, "x", 0);
+	textSvg.setAttributeNS(null, "y", 25);
+	textSvg.setAttributeNS(null, "fill", hexToColor(value));
+	textSvg.setAttributeNS(null, "font-family", fonts[choosenFont].name);
+	svg.appendChild(textSvg);
+	textSvg.appendChild(document.createTextNode(word.Word));
+
+	var parentDiv = document.getElementById("text");
+	parentDiv.innerHTML="";
+	parentDiv.appendChild(svg);
+
+
 }
 
 window.onload = function() {
