@@ -14,8 +14,24 @@
 			}	
 		</style>
 		<script>
-			function UpdateText(text) {
-				document.getElementById("text").innerHTML=text.Word;
+			function hexToColor(hex) {	
+				return "#" + ("000000" + hex.toString(16)).substr(-6);
+			}
+
+			function UpdateLogo(word) {
+				var h1 = document.getElementById("text");
+				h1.innerHTML=word.Word;
+
+				var bgColor = Math.floor(Math.random() * 0xFFFFFF);
+				document.body.style.backgroundColor = hexToColor(bgColor);
+
+				// TODO: this is a horrible algorithm for choosing an oposite color
+				// find somehting better: http://softwareengineering.stackexchange.com/questions/44929/color-schemes-generation-theory-and-algorithms
+				// http://serennu.com/colour/rgbtohsl.php
+				var value = ((bgColor & 0x0F) << 4) | ((bgColor & 0xF0) >> 4);
+				value = ((value & 0x33) << 2) | ((value & 0xCC) >> 2);
+				value = ((value & 0x55) << 1) | ((value & 0xAA) >> 1);
+				h1.style.color = hexToColor(value);
 			}
 
 			window.onload = function() {
@@ -24,7 +40,7 @@
 						//UpdateText("spacebar");
 						var s=document.createElement("script");
 						s.type="text/javascript";
-						s.src="http://www.setgetgo.com/randomword/get.php?callback=UpdateText";
+						s.src="http://www.setgetgo.com/randomword/get.php?callback=UpdateLogo";
 						document.body.appendChild(s);
 					}
 				}
