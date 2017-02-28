@@ -16,7 +16,7 @@ function hexToColor(hex) {
 	return "#" + ("000000" + hex.toString(16)).substr(-6);
 }
 
-function UpdateLogo(word) {
+export function UpdateLogo(word) {
 	var parentDiv = document.getElementById("text");
 
 	// Get a new bg color
@@ -57,7 +57,7 @@ window.onload = function() {
 		if(e.keyCode == 32){
 			var s=document.createElement("script");
 			s.type="text/javascript";
-			s.src="http://www.setgetgo.com/randomword/get.php?callback=UpdateLogo";
+			s.src="http://www.setgetgo.com/randomword/get.php?callback=app.UpdateLogo";
 			document.body.appendChild(s);
 		}
 		
