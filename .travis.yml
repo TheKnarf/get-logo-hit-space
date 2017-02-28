@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+  "node"
+install:
+  - npm install
+script:
+  - bash ./build_and_deploy.sh
+env:
+  global:
+  - ENCRYPTION_LABEL: "2b1e8582c37f"
+  - COMMIT_AUTHOR_EMAIL: "fl@nyggen.com"
