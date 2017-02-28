@@ -1,4 +1,7 @@
 language: node 
 node_js:
   "node"
-script: npm run build
+install:
+  - npm install
+script:
+  - npm run build
