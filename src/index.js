@@ -57,7 +57,8 @@ window.onload = function() {
 		if(e.keyCode == 32){
 			var s=document.createElement("script");
 			s.type="text/javascript";
-			s.src="http://www.setgetgo.com/randomword/get.php?callback=app.UpdateLogo";
+			s.src="http://www.setgetgo.com/randomword/get.php?callback=app.UpdateLogo&rand="
+						+ (new Date()).getTime();
 			document.body.appendChild(s);
 		}
 		
