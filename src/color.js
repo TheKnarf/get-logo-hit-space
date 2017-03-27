@@ -2,8 +2,8 @@ export const hexToColor = (hex)=>{
 	return "#" + ("000000" + hex.toString(16)).substr(-6);
 }
 
-export const getBgColor = ()=>{
-	return Math.floor(Math.random() * 0xFFFFFF);
+export const getBgColor = (random)=>{
+	return Math.floor(random * 0xFFFFFF);
 }
 
 export const getNewColor = (oldColor)=>{
