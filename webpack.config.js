@@ -12,5 +12,10 @@ module.exports = {
     new CopyWebpackPlugin([{
       from: 'src/index.html'
     }])
-  ]
+  ],
+  module: {
+    rules: [
+      { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }
+    ]
+  }
 };

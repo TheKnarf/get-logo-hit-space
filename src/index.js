@@ -1,6 +1,10 @@
 var fonts = require('./font').fonts;
 import {hexToColor, getBgColor, getNewColor} from './color';
 
+const svgEl = ()=>{
+	return document.createElementNS("http://www.w3.org/2000/svg", "svg");
+}
+
 export function UpdateLogo(word) {
 	var parentDiv = document.getElementById("text");
 
@@ -21,7 +25,7 @@ export function UpdateLogo(word) {
 		fonts[choosenFont].loaded = true;
 	}
 
-	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+	var svg = svgEl();
 	var textSvg = document.createElementNS(svg.namespaceURI, "text");
 	textSvg.setAttributeNS(null, "x", 0);
 	textSvg.setAttributeNS(null, "y", 25);
