@@ -5,7 +5,12 @@ const svgEl = ()=>{
 	return document.createElementNS("http://www.w3.org/2000/svg", "svg");
 }
 
-export function UpdateLogo(word) {
+export function newWord(word) {
+	window.location.hash = "#" + word.Word;
+}
+
+function UpdateLogo() {
+	const word = location.hash.substr(1);
 	var parentDiv = document.getElementById("text");
 
 	// Get a new bg color
@@ -32,7 +37,7 @@ export function UpdateLogo(word) {
 	textSvg.setAttributeNS(null, "fill", hexToColor(newColor));
 	textSvg.setAttributeNS(null, "font-family", fonts[choosenFont].name);
 	svg.appendChild(textSvg);
-	textSvg.appendChild(document.createTextNode(word.Word));
+	textSvg.appendChild(document.createTextNode(word));
 
 	parentDiv.innerHTML="";
 	parentDiv.appendChild(svg);
@@ -43,7 +48,7 @@ window.onload = function() {
 		if(e.keyCode == 32){
 			var s=document.createElement("script");
 			s.type="text/javascript";
-			s.src="http://www.setgetgo.com/randomword/get.php?callback=app.UpdateLogo&rand="
+			s.src="http://www.setgetgo.com/randomword/get.php?callback=app.newWord&rand="
 						+ (new Date()).getTime();
 			document.body.appendChild(s);
 		}
@@ -54,4 +59,8 @@ window.onload = function() {
 			return 0;
 		}
 	}
+
+	window.onhashchange = UpdateLogo;
+	if(window.location.hash !== "")
+		UpdateLogo();
 };
