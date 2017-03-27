@@ -10,8 +10,8 @@ const svgEl = ()=>{
 }
 
 export function newWord(word) {
-	//const hash = sha256.update(word.Word, 'utf8').digest('hex');
-	window.location.hash = "#" + word.Word //+ '&' + hash;
+	const hash = sha256.update(word.Word, 'utf8').digest('hex');
+	window.location.hash = "#" + word.Word + '&' + hash;
 }
 
 function UpdateLogo() {
@@ -25,13 +25,10 @@ function UpdateLogo() {
 					? location.hash.substr(location.hash.indexOf("&")+1)
 					: sha256.update(word, 'utf8').digest('hex');;
 
-	console.log(word, hash);
-
 	var parentDiv = document.getElementById("text");
 
 	// Get a new bg color
 	var random = shave(hash, 16777216);
-
 	
 	const bgColor = getBgColor(random.normalized);
 	parentDiv.style.backgroundColor = hexToColor(bgColor);
