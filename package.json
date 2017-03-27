@@ -26,5 +26,8 @@
   "bugs": {
     "url": "https://github.com/TheKnarf/get-logo-hit-space/issues"
   },
-  "homepage": "http://getlogohit.space/"
+  "homepage": "http://getlogohit.space/",
+  "dependencies": {
+    "sha.js": "^2.4.8"
+  }
 }

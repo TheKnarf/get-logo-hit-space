@@ -1,16 +1,22 @@
 var fonts = require('./font').fonts;
 import {hexToColor, getBgColor, getNewColor} from './color';
+import createHash from 'sha.js';
+
+const sha256 = createHash("sha256");
 
 const svgEl = ()=>{
 	return document.createElementNS("http://www.w3.org/2000/svg", "svg");
 }
 
 export function newWord(word) {
-	window.location.hash = "#" + word.Word;
+	const hash = sha256.update(word.Word, 'utf8').digest('hex');
+	window.location.hash = "#" + word.Word + '&' + hash;
 }
 
 function UpdateLogo() {
-	const word = location.hash.substr(1);
+	const word = location.hash.indexOf("&") !== -1
+					? location.hash.substr(1, location.hash.indexOf("&")-1)
+					: location.hash.substr(1);
 	var parentDiv = document.getElementById("text");
 
 	// Get a new bg color
