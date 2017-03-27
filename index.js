@@ -164,13 +164,17 @@ function UpdateLogo() {
 	parentDiv.appendChild(svg);
 }
 
+var getNewWord = function getNewWord() {
+	var s = document.createElement("script");
+	s.type = "text/javascript";
+	s.src = "http://www.setgetgo.com/randomword/get.php?callback=app.newWord&rand=" + new Date().getTime();
+	document.body.appendChild(s);
+};
+
 window.onload = function () {
 	window.onkeydown = function (e) {
 		if (e.keyCode == 32) {
-			var s = document.createElement("script");
-			s.type = "text/javascript";
-			s.src = "http://www.setgetgo.com/randomword/get.php?callback=app.newWord&rand=" + new Date().getTime();
-			document.body.appendChild(s);
+			getNewWord();
 		}
 
 		// Prevent scrolling
@@ -182,6 +186,39 @@ window.onload = function () {
 
 	window.onhashchange = UpdateLogo;
 	if (window.location.hash !== "") UpdateLogo();
+
+	// Register finger swipe gesture
+	document.addEventListener('touchstart', handleTouchStart, false);
+	document.addEventListener('touchmove', handleTouchMove, false);
+
+	var xDown = null;
+	var yDown = null;
+
+	function handleTouchStart(evt) {
+		xDown = evt.touches[0].clientX;
+		yDown = evt.touches[0].clientY;
+	};
+
+	function handleTouchMove(evt) {
+		if (!xDown || !yDown) return;
+
+		var xUp = evt.touches[0].clientX;
+		var yUp = evt.touches[0].clientY;
+
+		var xDiff = xDown - xUp;
+		var yDiff = yDown - yUp;
+
+		if (Math.abs(xDiff) > Math.abs(yDiff)) {
+			/*most significant*/
+			if (xDiff > 0) {
+				/* left swipe */
+				getNewWord();
+			}
+		}
+		/* reset values */
+		xDown = null;
+		yDown = null;
+	};
 };
 
 /***/ })
