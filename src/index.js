@@ -5,8 +5,17 @@ import {shave} from './random.js'
 
 const sha256 = createHash("sha256");
 
-const svgEl = ()=>{
-	return document.createElementNS("http://www.w3.org/2000/svg", "svg");
+const $ = (type="svg", args={})=>{
+	if(type=="svg")
+		return document.createElementNS("http://www.w3.org/2000/svg", "svg");
+
+	var svgEl = document.createElementNS(args.svg.namespaceURI, type);
+
+	Object.keys(args).forEach((key,index) => {
+	    svgEl.setAttributeNS(null, key, args[key]);
+	});
+
+	return svgEl;
 }
 
 export function newWord(word) {
@@ -47,14 +56,29 @@ function UpdateLogo() {
 		fonts[choosenFont].loaded = true;
 	}
 
-	var svg = svgEl();
-	var textSvg = document.createElementNS(svg.namespaceURI, "text");
-	textSvg.setAttributeNS(null, "x", 0);
-	textSvg.setAttributeNS(null, "y", 25);
-	textSvg.setAttributeNS(null, "fill", hexToColor(newColor));
-	textSvg.setAttributeNS(null, "font-family", fonts[choosenFont].name);
-	svg.appendChild(textSvg);
-	textSvg.appendChild(document.createTextNode(word));
+	var svg = $();
+	svg.appendChild($("text", {
+		"svg": svg,
+		"x" : 0,
+		"y" : 25,
+		"fill" : hexToColor(newColor),
+		"font-family": fonts[choosenFont].name
+	})).appendChild(document.createTextNode(word));
+
+	/*
+	svg.appendChild(
+		$("g", {
+			svg,
+			stroke: hexToColor(newColor)
+		})
+	).appendChild($("line", {
+		svg,
+		"x1": 0,
+		"y1": 0,
+		"x2": 100,
+		"y2": 100,
+		"stroke-width": 15
+	}));/**/
 
 	parentDiv.innerHTML="";
 	parentDiv.appendChild(svg);
