@@ -7,15 +7,36 @@ const sha256 = createHash("sha256");
 
 const $ = (type="svg", args={})=>{
 	if(type=="svg")
-		return document.createElementNS("http://www.w3.org/2000/svg", "svg");
-
-	var svgEl = document.createElementNS(args.svg.namespaceURI, type);
+		var svgEl = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+	else 
+		var svgEl = document.createElementNS(args.svg.namespaceURI, type);
 
 	Object.keys(args).forEach((key,index) => {
 	    svgEl.setAttributeNS(null, key, args[key]);
 	});
 
 	return svgEl;
+}
+
+const square = (point1, point2, stroke) => {
+	return [
+		[
+			{x: point1.x, y: point1.y + stroke / 2},
+			{x: point2.x, y: point1.y + stroke / 2}
+		],
+		[
+			{x: point2.x - stroke / 2, y: point1.y},
+			{x: point2.x - stroke / 2, y: point2.y}
+		],
+		[
+			{x: point2.x, y: point2.y - stroke / 2},
+			{x: point1.x, y: point2.y - stroke / 2}
+		],
+		[
+			{x: point1.x + stroke / 2, y: point2.y},
+			{x: point1.x + stroke / 2, y: point1.y}
+		]
+	];
 }
 
 export function newWord(word) {
@@ -56,7 +77,9 @@ function UpdateLogo() {
 		fonts[choosenFont].loaded = true;
 	}
 
-	var svg = $();
+	var svg = $("svg");
+	svg.style.width = "500px";
+	svg.style.height = "500px";
 	svg.appendChild($("text", {
 		"svg": svg,
 		"x" : 0,
@@ -65,20 +88,24 @@ function UpdateLogo() {
 		"font-family": fonts[choosenFont].name
 	})).appendChild(document.createTextNode(word));
 
-	/*
-	svg.appendChild(
+	const g = svg.appendChild(
 		$("g", {
 			svg,
 			stroke: hexToColor(newColor)
 		})
-	).appendChild($("line", {
-		svg,
-		"x1": 0,
-		"y1": 0,
-		"x2": 100,
-		"y2": 100,
-		"stroke-width": 15
-	}));/**/
+	);
+
+	const stroke=10;
+	square({x: 100, y: 100}, {x: 300, y: 300}, stroke).forEach(line => {
+		g.appendChild($("line", {
+			svg,
+			"x1": line[0].x,
+			"y1": line[0].y,
+			"x2": line[1].x,
+			"y2": line[1].y,
+			"stroke-width": stroke
+		}));
+	});
 
 	parentDiv.innerHTML="";
 	parentDiv.appendChild(svg);
