@@ -61,7 +61,7 @@ function UpdateLogo() {
 	var random = shave(hash, 16777216);
 	
 	const bgColor = getBgColor(random.normalized);
-	parentDiv.style.backgroundColor = hexToColor(bgColor);
+	//parentDiv.style.backgroundColor = hexToColor(bgColor);
 
 	const newColor = getNewColor(bgColor);
 
@@ -77,16 +77,28 @@ function UpdateLogo() {
 		fonts[choosenFont].loaded = true;
 	}
 
+	const svg_width = 500, svg_height = 500;
+
 	var svg = $("svg");
-	svg.style.width = "500px";
-	svg.style.height = "500px";
-	svg.appendChild($("text", {
+	svg.style.width = svg_width + "px";
+	svg.style.height = svg_height + "px";
+	svg.style.backgroundColor = hexToColor(bgColor);
+	const text = $("text", {
 		"svg": svg,
 		"x" : 0,
 		"y" : 25,
 		"fill" : hexToColor(newColor),
 		"font-family": fonts[choosenFont].name
-	})).appendChild(document.createTextNode(word));
+	});
+	svg.appendChild(text).appendChild(document.createTextNode(word));
+
+	parentDiv.innerHTML="";
+	parentDiv.appendChild(svg);
+
+	console.log(text.getBBox());
+
+	text.setAttributeNS(null, "x", (svg_width - text.getBBox().width)/2 + "px");
+	text.setAttributeNS(null, "y", (svg_height - text.getBBox().height)/2 + "px");
 
 	const g = svg.appendChild(
 		$("g", {
@@ -107,8 +119,6 @@ function UpdateLogo() {
 		}));
 	});
 
-	parentDiv.innerHTML="";
-	parentDiv.appendChild(svg);
 }
 
 const getNewWord = () => {
