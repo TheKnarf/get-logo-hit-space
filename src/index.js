@@ -22,9 +22,9 @@ const square = (point1, point2, stroke) => {
 		outerSquare,
 		[
 			{X: point1.X + stroke, Y: point1.Y + stroke},
-			{X: point2.X - stroke, Y: point1.Y + stroke},
+			{X: point1.X + stroke, Y: point2.Y - stroke},
 			{X: point2.X - stroke, Y: point2.Y - stroke},
-			{X: point1.X + stroke, Y: point2.Y - stroke}
+			{X: point2.X - stroke, Y: point1.Y + stroke}
 		]
 	];
 }
@@ -124,7 +124,6 @@ function UpdateLogo() {
 		{X: 300, Y: 300},
 		10
 	);
-	console.log(outerSquare, textSquare);
 
 	const cpr = new ClipperLib.Clipper();
 
