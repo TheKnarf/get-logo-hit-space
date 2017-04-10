@@ -77,7 +77,7 @@ function UpdateLogo() {
 	var random = shave(hash, 16777216);
 	
 	const bgColor = getBgColor(random.normalized);
-	//parentDiv.style.backgroundColor = hexToColor(bgColor);
+	parentDiv.style.backgroundColor = hexToColor(bgColor);
 
 	const newColor = getNewColor(bgColor);
 
