@@ -7,19 +7,6 @@ import ClipperLib from 'js-clipper';
 
 const sha256 = createHash("sha256");
 
-const $ = (type="svg", args={})=>{
-	if(type=="svg")
-		var svgEl = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-	else 
-		var svgEl = document.createElementNS(args.svg.namespaceURI, type);
-
-	Object.keys(args).forEach((key,index) => {
-	    svgEl.setAttributeNS(null, key, args[key]);
-	});
-
-	return svgEl;
-}
-
 const square = (point1, point2, stroke) => {
 	const outerSquare = [
 		{X: point1.X, Y: point1.Y},
@@ -162,34 +149,15 @@ function UpdateLogo() {
     if (!succeeded) throw new Error('Clipper operation failed!');
 
     svg
+    	.append('g')
+    	.attr('fill', hexToColor(newColor))
     	.selectAll('path')
     	.data([solution_paths])
     	.enter()
     	.append('path')
     	.attr('d', (d) => {
 	    	return paths2string(d);
-		})
-
-/*
-	const g = svg.append(
-		$("g", {
-			svg,
-			stroke: hexToColor(newColor)
-		})
-	);
-
-	const stroke=10;
-	square({x: 100, y: 100}, {x: 300, y: 300}, stroke).forEach(line => {
-		g.append($("line", {
-			svg,
-			"x1": line[0].x,
-			"y1": line[0].y,
-			"x2": line[1].x,
-			"y2": line[1].y,
-			"stroke-width": stroke
-		}));
-	});
-*/
+		});
 }
 
 const getNewWord = () => {
