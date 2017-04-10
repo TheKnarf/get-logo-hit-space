@@ -2,6 +2,8 @@ var fonts = require('./font').fonts;
 import {hexToColor, getBgColor, getNewColor} from './color';
 import createHash from 'sha.js';
 import {shave} from './random.js'
+import * as d3 from 'd3';
+import ClipperLib from 'js-clipper';
 
 const sha256 = createHash("sha256");
 
@@ -19,22 +21,23 @@ const $ = (type="svg", args={})=>{
 }
 
 const square = (point1, point2, stroke) => {
+	const outerSquare = [
+		{X: point1.X, Y: point1.Y},
+		{X: point2.X, Y: point1.Y},
+		{X: point2.X, Y: point2.Y},
+		{X: point1.X, Y: point2.Y}
+	];
+
+	if(stroke==0)
+		return [outerSquare];
+
 	return [
+		outerSquare,
 		[
-			{x: point1.x, y: point1.y + stroke / 2},
-			{x: point2.x, y: point1.y + stroke / 2}
-		],
-		[
-			{x: point2.x - stroke / 2, y: point1.y},
-			{x: point2.x - stroke / 2, y: point2.y}
-		],
-		[
-			{x: point2.x, y: point2.y - stroke / 2},
-			{x: point1.x, y: point2.y - stroke / 2}
-		],
-		[
-			{x: point1.x + stroke / 2, y: point2.y},
-			{x: point1.x + stroke / 2, y: point1.y}
+			{X: point1.X + stroke, Y: point1.Y + stroke},
+			{X: point2.X - stroke, Y: point1.Y + stroke},
+			{X: point2.X - stroke, Y: point2.Y - stroke},
+			{X: point1.X + stroke, Y: point2.Y - stroke}
 		]
 	];
 }
@@ -43,6 +46,32 @@ export function newWord(word) {
 	const hash = sha256.update(word.Word, 'utf8').digest('hex');
 	window.location.hash = "#" + word.Word + '&' + hash;
 }
+
+/* Converts Paths to SVG path string
+ *
+ * and scales down the coordinates
+ * from http://jsclipper.sourceforge.net/6.1.3.1/index.html?p=starter_boolean.html
+ */
+const paths2string = (paths, scale) => {
+	var i, p, path, svgpath, _j, _len2, _len3;
+	svgpath = '';
+	if (!(scale != null)) scale = 1;
+	for (_j = 0, _len2 = paths.length; _j < _len2; _j++) {
+		path = paths[_j];
+		for (i = 0, _len3 = path.length; i < _len3; i++) {
+			p = path[i];
+			if (i === 0) {
+				svgpath += 'M';
+			} else {
+				svgpath += 'L';
+			}
+			svgpath += p.X / scale + ", " + p.Y / scale;
+		}
+		svgpath += 'Z';
+	}
+	if (svgpath === '') svgpath = 'M0,0';
+	return svgpath;
+};
 
 function UpdateLogo() {
 	// Get word from browser-hash-url
@@ -79,28 +108,70 @@ function UpdateLogo() {
 
 	const svg_width = 500, svg_height = 500;
 
-	var svg = $("svg");
-	svg.style.width = svg_width + "px";
-	svg.style.height = svg_height + "px";
-	svg.style.backgroundColor = hexToColor(bgColor);
-	const text = $("text", {
-		"svg": svg,
-		"x" : 0,
-		"y" : 25,
-		"fill" : hexToColor(newColor),
-		"font-family": fonts[choosenFont].name
-	});
-	svg.appendChild(text).appendChild(document.createTextNode(word));
-
 	parentDiv.innerHTML="";
-	parentDiv.appendChild(svg);
+	const svg = d3	.select(parentDiv)
+					.append('svg')
+					.attr('width', svg_width)
+					.attr('height', svg_height)
+					.style('background-color', hexToColor(bgColor));
 
-	console.log(text.getBBox());
+	const text = svg
+					.append('text')
+					.attr('x', svg_height/2)
+					.attr('y', svg_width/2)
+					.attr('text-anchor', 'middle')
+					.attr('alignment-baseline', 'central')
+					.style('fill', hexToColor(newColor))
+					.style('font-family', fonts[choosenFont].name)
+					.text(word);
 
-	text.setAttributeNS(null, "x", (svg_width - text.getBBox().width)/2 + "px");
-	text.setAttributeNS(null, "y", (svg_height - text.getBBox().height)/2 + "px");
+	const textBB = text.node().getBBox();
+	const textSquare = square(
+		{X: textBB.x, Y: textBB.y},
+		{X: textBB.x + textBB.width, Y: textBB.y + textBB.height},
+		0
+	);
 
-	const g = svg.appendChild(
+	const outerSquare = square(
+		{X: 100, Y: 100},
+		{X: 300, Y: 300},
+		10
+	);
+	console.log(outerSquare, textSquare);
+
+	const cpr = new ClipperLib.Clipper();
+
+	cpr.AddPaths(
+		outerSquare,
+		ClipperLib.PolyType.ptSubject,
+		true
+	);
+	cpr.AddPaths(
+		textSquare,
+		ClipperLib.PolyType.ptClip,
+		true
+	);
+
+	var solution_paths = new ClipperLib.Paths();
+    var succeeded = cpr.Execute(
+    	ClipperLib.ClipType.ctDifference,
+    	solution_paths,
+    	ClipperLib.PolyFillType.pftNonZero,
+    	ClipperLib.PolyFillType.pftNonZero
+	);
+    if (!succeeded) throw new Error('Clipper operation failed!');
+
+    svg
+    	.selectAll('path')
+    	.data([solution_paths])
+    	.enter()
+    	.append('path')
+    	.attr('d', (d) => {
+	    	return paths2string(d);
+		})
+
+/*
+	const g = svg.append(
 		$("g", {
 			svg,
 			stroke: hexToColor(newColor)
@@ -109,7 +180,7 @@ function UpdateLogo() {
 
 	const stroke=10;
 	square({x: 100, y: 100}, {x: 300, y: 300}, stroke).forEach(line => {
-		g.appendChild($("line", {
+		g.append($("line", {
 			svg,
 			"x1": line[0].x,
 			"y1": line[0].y,
@@ -118,7 +189,7 @@ function UpdateLogo() {
 			"stroke-width": stroke
 		}));
 	});
-
+*/
 }
 
 const getNewWord = () => {
