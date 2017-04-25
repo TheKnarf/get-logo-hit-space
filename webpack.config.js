@@ -11,6 +11,10 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin([{
       from: 'src/index.html'
+    }]),
+    new CopyWebpackPlugin([{
+      from: 'node_modules/figlet/fonts',
+      to: 'fonts'
     }])
   ],
   module: {

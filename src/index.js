@@ -1,9 +1,11 @@
-var fonts = require('./font').fonts;
+import {fonts}  from './font';
 import {hexToColor, getBgColor, getNewColor} from './color';
 import createHash from 'sha.js';
 import {shave} from './random.js'
 import * as d3 from 'd3';
 import ClipperLib from 'js-clipper';
+import figlet from 'figlet';
+import {fonts as figlet_fonts} from './figlet-fonts'
 
 const sha256 = createHash("sha256");
 
@@ -77,7 +79,7 @@ function UpdateLogo() {
 	var random = shave(hash, 16777216);
 	
 	const bgColor = getBgColor(random.normalized);
-	parentDiv.style.backgroundColor = hexToColor(bgColor);
+	parentDiv.style.backgroundColor = hexToColor(bgColor); // TODO: comment this away for debugging
 
 	const newColor = getNewColor(bgColor);
 
@@ -102,61 +104,130 @@ function UpdateLogo() {
 					.attr('height', svg_height)
 					.style('background-color', hexToColor(bgColor));
 
-	const text = svg
-					.append('text')
-					.attr('x', svg_height/2)
-					.attr('y', svg_width/2)
-					.attr('text-anchor', 'middle')
-					.attr('alignment-baseline', 'central')
-					.style('fill', hexToColor(newColor))
-					.style('font-family', fonts[choosenFont].name)
-					.text(word);
+	random = shave(random, 2);
 
-	const textBB = text.node().getBBox();
-	const textSquare = square(
-		{X: textBB.x, Y: textBB.y},
-		{X: textBB.x + textBB.width, Y: textBB.y + textBB.height},
-		0
-	);
+	if(random.result == 0 && false) {
+		const text = svg
+						.append('text')
+						.attr('x', svg_width/2)
+						.attr('y', svg_height/2)
+						.attr('text-anchor', 'middle')
+						.attr('alignment-baseline', 'central')
+						.style('fill', hexToColor(newColor))
+						.style('font-family', fonts[choosenFont].name)
+						.text(word);
 
-	const outerSquare = square(
-		{X: 100, Y: 100},
-		{X: 300, Y: 300},
-		10
-	);
+		const textBB = text.node().getBBox();
+		const textSquare = square(
+			{X: textBB.x, Y: textBB.y},
+			{X: textBB.x + textBB.width, Y: textBB.y + textBB.height},
+			0
+		);
+		
+		random = shave(random, 250);
+		var osx1 = random.result;
+		random = shave(random, 250);
+		var osx2 = random.result + 250;
+		random = shave(random, 250);
+		var osy1 = random.result;
+		random = shave(random, 250);
+		var osy2 = random.result + 250;
 
-	const cpr = new ClipperLib.Clipper();
+		var p1 = {X: osx1, Y: osy1};
+		var p2 = {X: osx2, Y: osy2};
 
-	cpr.AddPaths(
-		outerSquare,
-		ClipperLib.PolyType.ptSubject,
-		true
-	);
-	cpr.AddPaths(
-		textSquare,
-		ClipperLib.PolyType.ptClip,
-		true
-	);
+		const outerSquare = square(
+			p1,
+			p2,
+			10
+		);
 
-	var solution_paths = new ClipperLib.Paths();
-    var succeeded = cpr.Execute(
-    	ClipperLib.ClipType.ctDifference,
-    	solution_paths,
-    	ClipperLib.PolyFillType.pftNonZero,
-    	ClipperLib.PolyFillType.pftNonZero
-	);
-    if (!succeeded) throw new Error('Clipper operation failed!');
+		const cpr = new ClipperLib.Clipper();
 
-    svg
-    	.append('g')
-    	.attr('fill', hexToColor(newColor))
-    	.selectAll('path')
-    	.data([solution_paths])
-    	.enter()
-    	.append('path')
-    	.attr('d', (d) => {
-	    	return paths2string(d);
+		cpr.AddPaths(
+			outerSquare,
+			ClipperLib.PolyType.ptSubject,
+			true
+		);
+		cpr.AddPaths(
+			textSquare,
+			ClipperLib.PolyType.ptClip,
+			true
+		);
+
+		var solution_paths = new ClipperLib.Paths();
+	    var succeeded = cpr.Execute(
+	    	ClipperLib.ClipType.ctDifference,
+	    	solution_paths,
+	    	ClipperLib.PolyFillType.pftNonZero,
+	    	ClipperLib.PolyFillType.pftNonZero
+		);
+	    if (!succeeded) throw new Error('Clipper operation failed!');
+
+	    svg
+	    	.append('g')
+	    	.attr('fill', hexToColor(newColor))
+	    	.selectAll('path')
+	    	.data([solution_paths])
+	    	.enter()
+	    	.append('path')
+	    	.attr('d', (d) => {
+		    	return paths2string(d);
+			});
+	} else {		
+		random = shave(random, figlet_fonts.length);
+
+		figlet.text(word, {
+			font: figlet_fonts[random.result]
+		}, function(err, data) {
+		    if (err) {
+		        console.log('Something went wrong...');
+		        console.dir(err);
+		        return;
+		    }
+
+		    //console.log(data)
+		    console.log("Figlet font: ", figlet_fonts[random.result])
+
+    		const text = svg
+				.append('text')
+				.attr('font-size', '12px')
+				.attr('alignment-baseline', 'central')
+				.style('fill', hexToColor(newColor))
+				.style('font-family', 'Menlo, monospace')
+			
+			var chars = data.split("");
+			var char_width = 7;
+			var char_height = 15;
+			var x=0;
+			var y=0;
+
+			text
+				.selectAll('tspan')
+				.data(chars)
+				.enter()
+				.append('tspan')
+				.attr('x', (c,i) => {
+					if(c == "\n")
+						x=-1;
+
+					return (++x) * char_width + 25
+				})
+				.attr('y', (c,i) => {
+					if(c=="\n")
+						y+=char_height;
+
+					return y + 25
+				})
+				.text( d=>d );
+
+			const bbBox = text.node().getBBox();
+
+			svg
+				.attr('width', bbBox.width + 50)
+				.attr('height', bbBox.height + 50)
 		});
+	}
 }
 
 const getNewWord = () => {

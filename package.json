@@ -8,7 +8,8 @@
     "babel-loader": "^6.4.1",
     "babel-preset-env": "^1.2.2",
     "copy-webpack-plugin": "^4.0.1",
-    "webpack": "^2.2.1"
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.4.4"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -29,6 +30,7 @@
   "homepage": "http://getlogohit.space/",
   "dependencies": {
     "d3": "^4.7.4",
+    "figlet": "^1.2.0",
     "js-clipper": "^1.0.1",
     "sha.js": "^2.4.8"
   }
