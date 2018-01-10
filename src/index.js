@@ -7,6 +7,11 @@ import ClipperLib from 'js-clipper';
 import figlet from 'figlet';
 import {fonts as figlet_fonts} from './figlet-fonts'
 
+import uniqueRandomArray from 'unique-random-array';
+import wordlist from 'word-list/words.txt';
+const randomWord = uniqueRandomArray(wordlist.split('\n'));
+
+
 const sha256 = createHash("sha256");
 
 const square = (point1, point2, stroke) => {
@@ -231,11 +236,7 @@ function UpdateLogo() {
 }
 
 const getNewWord = () => {
-	var s=document.createElement("script");
-	s.type="text/javascript";
-	s.src="http://www.setgetgo.com/randomword/get.php?callback=app.newWord&rand="
-			+ (new Date()).getTime();
-	document.body.appendChild(s);
+	newWord({Word: randomWord()});
 }
 
 window.onload = function() {
