@@ -1,4 +1,5 @@
-#Get logo, hit space
+# Get logo, hit space
+
 [![Build Status](https://travis-ci.org/TheKnarf/get-logo-hit-space.svg?branch=master)](https://travis-ci.org/TheKnarf/get-logo-hit-space)
 
 A service for gennerating a random logo. Hit space, get a new name and logo.
