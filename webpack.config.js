@@ -1,27 +1,24 @@
-var path = require('path'),
-	CopyWebpackPlugin = require('copy-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.js',
-  output: {
-  	library: 'app',
-    filename: 'index.js',
-    path: path.resolve(__dirname, 'dist')
-  },
-  plugins: [
-    new CopyWebpackPlugin([{
-      from: 'src/index.html'
-    }]),
-    new CopyWebpackPlugin([{
-      from: 'node_modules/figlet/fonts',
-      to: 'fonts'
-    }])
-  ],
-  module: {
-	  rules: [
-	  { test: /\.txt$/, use: 'raw-loader' },
-	  { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' },
-	  ]
-  },
-  devtool: '#inline-source-map',
+	module: {
+		rules: [
+			{ test: /\.txt$/, use: 'raw-loader' },
+			{ test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' },
+		]
+	},
+	plugins: [
+		new CopyWebpackPlugin({
+			patterns: [
+				{ from: 'src/index.html' },
+				{ from: 'node_modules/figlet/fonts', to: 'fonts' },
+			]
+		})
+	],
+	devtool: 'inline-source-map',
+	resolve: {
+		fallback: {
+			buffer: require.resolve("buffer/")
+		}
+	},
 }
