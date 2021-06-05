@@ -7,6 +7,7 @@ import ClipperLib from 'js-clipper';
 import figlet from 'figlet';
 import {fonts as figlet_fonts} from './figlet-fonts'
 import './CNAME';
+import './index.css';
 
 import uniqueRandomArray from 'unique-random-array';
 import wordlist from 'word-list/words.txt';
