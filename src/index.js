@@ -6,6 +6,7 @@ import * as d3 from 'd3';
 import ClipperLib from 'js-clipper';
 import figlet from 'figlet';
 import {fonts as figlet_fonts} from './figlet-fonts'
+import './CNAME';
 
 import uniqueRandomArray from 'unique-random-array';
 import wordlist from 'word-list/words.txt';

@@ -4,6 +4,11 @@ module.exports = {
 	module: {
 		rules: [
 			{ test: /\.txt$/, use: 'raw-loader' },
+			{
+				test: /CNAME$/,
+				loader: 'file-loader',
+				options: { name: 'CNAME' }
+			},
 			{ test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' },
 		]
 	},
