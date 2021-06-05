@@ -13,4 +13,3 @@ A service for gennerating a random logo. Hit space, get a new name and logo.
 - [ ] Create some vector graphics
 
 - [ ] Add a download button for the logo
-
